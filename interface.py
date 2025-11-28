@@ -3,16 +3,24 @@ from tkinter import ttk
 
 def exibir_na_tela():
     """
-    Pega o texto da caixa Multilinha (Text) e exibe no Label.
+    Pega o texto, salva no arquivo e exibe no Label.
     """
     # "1.0" significa: Comece da linha 1, caractere 0.
     # "end-1c" significa: Vá até o final, removendo a última quebra de linha automática.
+    conteudo = entrada.text.get("1.0", "end-1c") #Variavel que obtem as instrucoes.
 
-    #Variavel que obtem o conteudo da entrada.
-    conteudo = entrada.text.get("1.0", "end-1c")
-    print(f"{conteudo}")
     if conteudo.strip(): #verifica se esta vazio
+        
+        # Salva direto no arquivo antes de exibir
+        try:
+            with open("instrucoes.txt", "w", encoding="utf-8") as arquivo:
+                arquivo.write(conteudo)
+        except Exception as e:
+            print(f"Erro ao salvar arquivo: {e}")
+
+        # Exibe na tela
         label_resultado.config(text=conteudo, fg="blue")
+        
     else:
         label_resultado.config(text="Nao ha instrucoes", fg="red") #texto e cor
 
@@ -50,6 +58,7 @@ tk.Label(frame_saida, text="Resultado:", font=("Arial", 10, "bold")).pack()
 
 label_resultado = tk.Label(frame_saida, text="...", font=("Arial", 12), justify="left")
 label_resultado.pack(pady=10)
+
 
 #loop para manter a janela aberta.
 root.mainloop()
