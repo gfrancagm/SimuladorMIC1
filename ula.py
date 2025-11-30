@@ -1,20 +1,18 @@
 class ULA:
-    def __init__(self):
-        self.a = 0
-        self.b = 0
-        self.n_flag = 0 
-        self.z_flag = 0
-        self.result = 0
+    def operar(self, a, b, op_code):
+        result = 0
 
-    def sum(self, a, b):
-        self.result = a + b
+        if op_code == 0: # soma
+            result = a + b
+        if op_code == 1: # lógica and
+            result = a & b
+        if op_code == 2: # A
+            result = a
+        if op_code == 3:
+            result = ~a # inverso
+
+        result = result & 0xFFFF
     
-    def logic_and(self, a, b):
-        self.result = a + b
-    
-    def a(self, a):
-        self.result = a
+        z_flag = 1 if result == 0 else 0
 
-
-    def not_a(self, a):
-        self.result = ~a
+        n_flag = 1 if (result >> 15) & 1 else 0

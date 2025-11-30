@@ -1,16 +1,17 @@
 class UC:
     def __init__(self):
         self.amux = 0
-        self.ula = [0,0]
-        self.desl = [0,0] 
-        self.mbr = 0
-        self.mar = 0
-        self.rd = 0
-        self.lat_a = 0
-        self.en_c = 0
-        self.bar_c = [0,0,0,0]
-        self.bar_b = [0,1,1,0]
-        self.bar_a = [0,0,0,0]
+        self.cond = 1
+        self.alu = 2
+        self.sh = 3
+        self.mbr = 4
+        self.mar = 5
+        self.rd = 6
+        self.wr = 7
+        self.enc = 8
+        self.reg_c = 9
+        self.reg_b = 10
+        self.reg_a = 11
+        self.addr = 12
 
-        self.latch_a = 0
-        self.latch_b = 0
+        self.registers[12];
