@@ -30,14 +30,9 @@ class Datapath:
 
         self.ula = ULA()
         
-    def ciclo_MVN(self):
+    def executar(self):
         
-        #self.registrador[ir] = self.registrador[pc] buscar operação pelo pc (???)
-        #como vou implementar isso?
-        self.registrador[mar] = self.registrador[ir]
-        self.registrador[pc] = self.registrador[pc] + 1
-        
-        #buscar na memoria de algum jeito???
+        pass
 
         
         
