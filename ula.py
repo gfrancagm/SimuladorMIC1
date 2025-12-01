@@ -16,3 +16,5 @@ class ULA:
         z_flag = 1 if result == 0 else 0
 
         n_flag = 1 if (result >> 15) & 1 else 0
+        
+        return result, z_flag, n_flag

@@ -1,27 +1,43 @@
 from ula import ULA
-from uc import UC
 
-class datapath:
+pc = 0
+ac = 1
+sp = 2
+ir = 3
+tir = 4
+zero = 5
+plus = 6
+minus = 7
+amask = 8
+smask = 9
+reg_a = 10
+reg_b = 11
+reg_c = 12
+reg_d = 13
+reg_e = 14
+reg_f = 15
+mbr = 16
+mar = 17
+
+class Datapath:
     def __init__(self):
-        # indices dos registradores
-        self.pc = 0
-        self.ac = 1
-        self.sp = 2
-        self.ir = 3
-        self.tir = 4
-        self.zero = 5
-        self.plus = 6
-        self.minus = 7
-        self.amask = 8
-        self.smask = 9
-        self.reg_a = 10
-        self.reg_b = 11
-        self.reg_c = 12
-        self.reg_d = 13
-        self.reg_e = 14
-        self.reg_f = 15 
+        self.registrador = [0] * 18
+        self.registrador[plus] = 1
+        self.registrador[minus] = -1
 
-        self.registers = [0] * 16
+        self.latch_a = 0
+        self.latch_b = 0
 
         self.ula = ULA()
-        self.uc = UC()
+        
+    def ciclo_MVN(self):
+        
+        #self.registrador[ir] = self.registrador[pc] buscar operação pelo pc (???)
+        #como vou implementar isso?
+        self.registrador[mar] = self.registrador[ir]
+        self.registrador[pc] = self.registrador[pc] + 1
+        
+        #buscar na memoria de algum jeito???
+
+        
+        

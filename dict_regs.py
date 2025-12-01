@@ -1,0 +1,36 @@
+idx_vd = {
+    "pc": 0,
+    "ac": 1,
+    "sp": 2,
+    "ir": 3,
+    "tir": 4,
+    "0": 5,
+    "+1": 6,
+    "-1": 7,
+    "amask": 8,
+    "smask": 9,
+    "registrador_a": 10,
+    "registrador_b": 11,
+    "registrador_c": 12,
+    "registrador_d": 13,
+    "registrador_e": 14,
+    "registrador_f": 15,
+    "mbr": 16,
+    "mar": 17
+}
+
+idx_uc = {
+    "amux" : 0,
+    "cond" : 1,
+    "alu" : 2,
+    "sh" : 3,
+    "mbr" : 4,
+    "mar" : 5,
+    "rd" : 6,
+    "wr" : 7,
+    "enc" : 8,
+    "reg_c" : 9,
+    "reg_b" : 10,
+    "reg_a" : 11,
+    "addr" : 12,
+}
