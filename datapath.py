@@ -1,38 +1,53 @@
 from ula import ULA
 
-pc = 0
-ac = 1
-sp = 2
-ir = 3
-tir = 4
-zero = 5
-plus = 6
-minus = 7
-amask = 8
-smask = 9
-reg_a = 10
-reg_b = 11
-reg_c = 12
-reg_d = 13
-reg_e = 14
-reg_f = 15
-mbr = 16
-mar = 17
+PC = 0
+AC = 1
+SP = 2
+IR = 3
+TIR = 4
+ZERO = 5
+PLUS = 6
+MINUS = 7
+AMASK = 8
+SMASK = 9
+REG_A = 10
+REG_B = 11
+REG_C = 12
+REG_D = 13
+REG_E = 14
+REG_F = 15
+MBR = 16
+MAR = 17
 
 class Datapath:
     def __init__(self):
         self.registrador = [0] * 18
-        self.registrador[plus] = 1
-        self.registrador[minus] = -1
+        self.registrador[PLUS] = 1
+        self.registrador[MINUS] = -1
 
         self.latch_a = 0
         self.latch_b = 0
 
+        self.n_flag = 0
+        self.z_flag = 0
+
         self.ula = ULA()
         
-    def executar(self):
+    def ler_registradores(self, endereco_a, endereco_b):
+        self.latch_a = self.registrador[endereco_a]
+        self.latch_b = self.registrador[endereco_b]
         
-        pass
+    def escrever_registrador(self, endereco_c, valor):
+        if endereco_c != 0:
+            self.registrador[endereco_c] = valor
 
+    def executar_ula(self, op_code):
+        resultado, n, z = self.ula.operar(self.latch_a, self.latch_b, op_code)
         
+        self.n_flag = n
+        self.z_flag = z
         
+        return resultado
+    
+   
+    
