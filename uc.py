@@ -1,6 +1,4 @@
 # constantes
-import time
-
 AMUX = 0
 COND = 1
 ALU = 2
@@ -29,15 +27,14 @@ class UC:
         self.n_flag = 0
         self.z_flag = 0
             
-    def run(self, datapath):                
-        
+    def run(self, datapath, mp):                
         while True:
             
             self.mir = self.memoria_controle[self.mpc]
             
-            endereco_bar_a = int(self.mir[A], 2)
-            endereco_bar_b = int(self.mir[B], 2)
             endereco_escrita_c = int(self.mir[C], 2)
+            endereco_bar_b = int(self.mir[B], 2)
+            endereco_bar_a = int(self.mir[A], 2)
             
             op_ula = self.mir[ALU]
             
@@ -46,8 +43,14 @@ class UC:
             
             datapath.ler_registradores(endereco_bar_a, endereco_bar_b)
             
+            if self.mir[MAR] == '1':
+                datapath.registrador[17] = datapath.latch_b # carrega o endereço do latch B no MAR
+             
+            if self.mir[RD] == '1':  
+                datapath.registrador[16] = mp.ler(datapath.registrador[17]) # lê o endereço que está no MAR e carrega no MBR
+            
             if self.mir[AMUX] == '1':
-                datapath.latch_a = datapath.registrador[16]
+                datapath.latch_a = datapath.registrador[16] # pega o resultado do MBR e carrega na ULA
             
             print(f"  -> Latch A: {datapath.latch_a} | Latch B: {datapath.latch_b}")
             
@@ -73,7 +76,5 @@ class UC:
                 print(f"  -> Novo MPC: {self.mpc}")    
             else:
                 self.mpc += 1
-           
-            print(*datapath.registrador)
            
             input("\n---> Pressione ENTER para executar o próximo ciclo...")

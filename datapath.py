@@ -24,6 +24,8 @@ class Datapath:
         self.registrador = [0] * 18
         self.registrador[PLUS] = 1
         self.registrador[MINUS] = -1
+        #self.registrador[AMASK] = 0x0FFF
+        #self.registrador[SMASK] = 0x00FF
 
         self.latch_a = 0
         self.latch_b = 0

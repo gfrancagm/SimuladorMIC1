@@ -1,6 +1,13 @@
 class ULA:
     def operar(self, a, b, op_code):
         result = 0
+        
+        if isinstance(a, str):
+            print(f"[AVISO ULA] Entrada A é string: '{a}'. Convertendo para int.")
+            a = int(a)
+        if isinstance(b, str):
+            print(f"[AVISO ULA] Entrada B é string: '{b}'. Convertendo para int.")
+            b = int(b)
 
         if op_code == "00": 
             result = a + b
@@ -11,14 +18,14 @@ class ULA:
         elif op_code == "11":
             result = ~a 
 
-        result = result & 0xFFFF
+        result = result & 0xFFFF # força o resultado a ser um número de 16 bits
 
         if result == 0:
             z_flag = 1
         else: 
             z_flag = 0
 
-        if (result & 0x8000) != 0:
+        if (result & 0x8000) != 0: # pega o MSB do resultado
             n_flag = 1
         else: 
             n_flag = 0
