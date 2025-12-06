@@ -1,9 +1,12 @@
 from uc import UC
 from datapath import Datapath
-from memoria_principal import MP
+from mp import MP
 
-dp = Datapath()
-uc = UC()
-mp = MP()
-
-uc.run(dp, mp)
+if __name__ == "__main__":
+    uc = UC()
+    dp = Datapath()
+    mp = MP()
+   
+    for line in mp.memoria:
+        uc.executar_passo(dp, mp)
+        input("")

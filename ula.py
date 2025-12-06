@@ -3,10 +3,9 @@ class ULA:
         result = 0
         
         if isinstance(a, str):
-            print(f"[AVISO ULA] Entrada A é string: '{a}'. Convertendo para int.")
             a = int(a)
+            
         if isinstance(b, str):
-            print(f"[AVISO ULA] Entrada B é string: '{b}'. Convertendo para int.")
             b = int(b)
 
         if op_code == "00": 
