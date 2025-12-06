@@ -1,3 +1,5 @@
+import micro
+
 # constantes
 AMUX = 0
 COND = 1
@@ -15,7 +17,7 @@ ADDR = 12
 
 class UC:
     def __init__(self):
-        self.memoria_controle = [None] * 512 
+        self.memoria_controle = [0] * 512 
         self.mir = []
         self.mpc = 0
         
@@ -25,56 +27,60 @@ class UC:
                 self.memoria_controle[idx] = conteudo.split()
             
         self.n_flag = 0
-        self.z_flag = 0
+        self.z_flag = 0        
+    
+    def executar_passo(self, datapath, mp):          
+        micro.log_micro(self.mpc)
+        self.mir = self.memoria_controle[self.mpc] 
+        
+        # --- Decodificação dos campos do MIR ---
+        endereco_escrita_c = int(self.mir[C], 2)
+        endereco_bar_b = int(self.mir[B], 2)
+        endereco_bar_a = int(self.mir[A], 2)
+        op_ula = self.mir[ALU]
+        op_shift = self.mir[SH]
+        
+        datapath.ler_registradores(endereco_bar_a, endereco_bar_b)
+        
+        if self.mir[MAR] == '1':
+            datapath.registrador[17] = datapath.latch_b 
+                
+        if self.mir[RD] == '1':  
+            valor = mp.ler(datapath.registrador[17])
+            datapath.registrador[16] = valor 
+        
+        if self.mir[AMUX] == '1':
+            datapath.latch_a = datapath.registrador[16] 
+        
+        resultado_ula = datapath.executar_ula(op_ula)
+        
+        if self.mir[SH] != '00':    
+            resultado_ula = datapath.executar_shifter(op_shift, resultado_ula)
             
-    def run(self, datapath, mp):                
-        while True:
-            
-            self.mir = self.memoria_controle[self.mpc]
-            
-            endereco_escrita_c = int(self.mir[C], 2)
-            endereco_bar_b = int(self.mir[B], 2)
-            endereco_bar_a = int(self.mir[A], 2)
-            
-            op_ula = self.mir[ALU]
-            
-            print("-" * 40)
-            print(f"MPC: {self.mpc} | MIR: {' '.join(self.mir)}")
-            
-            datapath.ler_registradores(endereco_bar_a, endereco_bar_b)
-            
-            if self.mir[MAR] == '1':
-                datapath.registrador[17] = datapath.latch_b # carrega o endereço do latch B no MAR
-             
-            if self.mir[RD] == '1':  
-                datapath.registrador[16] = mp.ler(datapath.registrador[17]) # lê o endereço que está no MAR e carrega no MBR
-            
-            if self.mir[AMUX] == '1':
-                datapath.latch_a = datapath.registrador[16] # pega o resultado do MBR e carrega na ULA
-            
-            print(f"  -> Latch A: {datapath.latch_a} | Latch B: {datapath.latch_b}")
-            
-            resultado_ula = datapath.executar_ula(op_ula)
-            
-            print(f"  -> Resultado ULA: {resultado_ula}")
-            print(f"  -> Flags Geradas: N={datapath.n_flag}, Z={datapath.z_flag}")
-            
-            if self.mir[ENC] == '1':
-                datapath.escrever_registrador(endereco_escrita_c, resultado_ula)
+        if self.mir[MBR] == '1':
+            datapath.registrador[16] = resultado_ula    
+        
+        if self.mir[ENC] == '1':
+            datapath.escrever_registrador(endereco_escrita_c, resultado_ula)
 
-            condicao_desvio = self.mir[COND]
-            novo_endereco = int(self.mir[ADDR], 2)
+        if self.mir[WR] == '1':
+            valor_mbr = datapath.registrador[16]
+            endereco_mar = datapath.registrador[17]
+            mp.escrever(endereco_mar, valor_mbr)
+
+        condicao_desvio = self.mir[COND]
+        novo_endereco = int(self.mir[ADDR], 2)
+        
+        # Lógica de Pulo
+        if datapath.n_flag == 1 and condicao_desvio == '01':
+            self.mpc = novo_endereco
+        elif datapath.z_flag == 1 and condicao_desvio == '10':
+            self.mpc = novo_endereco
+        elif condicao_desvio == '11':
+            self.mpc = novo_endereco
+        else:
+            self.mpc += 1
             
-            if datapath.n_flag == 1 and condicao_desvio == '01':
-                self.mpc = novo_endereco
-                print("  [!] Desvio por N=1 realizado")
-            elif datapath.z_flag == 1 and condicao_desvio == '10':
-                self.mpc = novo_endereco
-                print("  [!] Desvio por Z=1 realizado")
-            elif condicao_desvio == '11':
-                self.mpc = novo_endereco
-                print(f"  -> Novo MPC: {self.mpc}")    
-            else:
-                self.mpc += 1
-           
-            input("\n---> Pressione ENTER para executar o próximo ciclo...")
+        print("PC = ", datapath.registrador[0])
+        print("AC = ", datapath.registrador[1])
+        print(mp.memoria[11])

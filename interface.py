@@ -71,11 +71,11 @@ def processar_instrucoes():
         instrucoes_bin = traduzir_programa(conteudo_bruto)
         
         # Formata o resultado com binário
-        texto_final = "PROGRAMA TRADUZIDO:\n\n"
+        texto_final = ""
 
         #exibe cada instruçao traduzida para binario
         for i, binario in enumerate(instrucoes_bin):
-            texto_final += f". {binario}\n"
+            texto_final += f"{binario}\n"
         
         # Salva e exibe
         salvar_arquivo(texto_final)    
