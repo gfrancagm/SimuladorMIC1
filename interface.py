@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import datetime
-from tradutor import traduzir_programa
+from montador import traduzir_programa
 from mp import MP
 from uc import UC
 from datapath import Datapath
@@ -281,3 +281,4 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = SimuladorUI(root)
     root.mainloop()
+
