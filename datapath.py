@@ -56,8 +56,4 @@ class Datapath:
         resultado = self.shifter.operar(op_code, resultado_ula)
         
         return resultado
-    
-    def imprimir(self):
-        print("\nREGISTRADORES DA VIA DE DADOS:")
-        for idx, elem in enumerate(self.registrador):
-            print(f"[{idx}] = {elem}")
+ 

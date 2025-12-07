@@ -1,4 +1,4 @@
-import micro
+import micro as micro
 
 # constantes
 AMUX = 0
@@ -81,6 +81,3 @@ class UC:
         else:
             self.mpc += 1
             
-        print("PC = ", datapath.registrador[0])
-        print("AC = ", datapath.registrador[1])
-        print(mp.memoria[11])

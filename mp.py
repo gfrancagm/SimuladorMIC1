@@ -18,4 +18,3 @@ class MP:
         endereco = endereco & 0x0FFF
         
         self.memoria[endereco] = valor
-        print(f"[MEM] Escrita no endereço {endereco}: {valor}")
