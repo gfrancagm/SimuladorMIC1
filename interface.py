@@ -64,10 +64,8 @@ class SimuladorUI:
                   bg=self.CORES["destaque_azul"], fg="white", relief="flat").pack(fill="x", pady=5)
 
         self.criar_painel_controle(p_esq)
-
-        tk.Label(p_esq, text="Saída (Output):", fg="white", bg=self.CORES["fundo_base"]).pack(anchor="w", pady=(10,0))
-        self.txt_saida = tk.Text(p_esq, height=8, width=40, font=self.FONTE_CODE, bg="black", fg="#00ffff", bd=0)
-        self.txt_saida.pack(fill="x", pady=5)
+        
+        # Saída (Output) REMOVIDA conforme solicitado
 
         # --- PAINEL DIREITO (Visualização) ---
         p_dir = tk.Frame(main_frame, bg=self.CORES["fundo_painel"])
@@ -91,7 +89,6 @@ class SimuladorUI:
             self.tree_regs.insert("", "end", values=(reg, "0", "0"*16))
 
         # 3. Tabela de Memória (COM SCROLLBAR)
-        # Container para a tabela e a scrollbar (substitui a chamada antiga criar_tabela)
         frame_mem = tk.Frame(p_dir, bg=self.CORES["fundo_painel"])
         frame_mem.place(x=500, y=50, width=400, height=600) 
 
@@ -114,13 +111,12 @@ class SimuladorUI:
         self.tree_mem.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.config(command=self.tree_mem.yview)
 
-        # Inicializa com 256 endereços (você pode aumentar para 1024 se quiser)
         for i in range(256):
             self.tree_mem.insert("", "end", values=(str(i), "0"*16, "0"))
 
         # 4. Log
         self.txt_log = tk.Text(p_dir, bg="#1e1e1e", fg="#4af626", width=35)
-        self.txt_log.place(x=920, y=50, width=330, height=550) # Ajustei posição X
+        self.txt_log.place(x=920, y=50, width=330, height=550) 
 
     def criar_painel_controle(self, parent):
         frame = tk.Frame(parent, bg=self.CORES["fundo_painel"], pady=10)
@@ -146,7 +142,7 @@ class SimuladorUI:
         for col in colunas:
             tree.heading(col, text=col)
             tree.column(col, width=int(largura/len(colunas)), anchor="center")
-        tree.place(x=x, y=y, width=largura, height=600) # Aumentei height
+        tree.place(x=x, y=y, width=largura, height=600) 
         return tree
 
     def log_sistema(self, msg):
@@ -192,7 +188,6 @@ class SimuladorUI:
                 self.tree_regs.item(item, values=(reg_nome, val_dec, val_bin))
 
         # 2. Atualizar Memória (Endereço, Bin, Dec)
-        # Itera sobre todas as linhas criadas na tabela de memória
         for i, item in enumerate(self.tree_mem.get_children()):
             val = self.mp.ler(i)
             bin_str = f"{val:016b}"
@@ -203,11 +198,47 @@ class SimuladorUI:
             micro_txt = micro.mpc_to_micro.get(mpc_log, "---")
             self.log_sistema(f"MPC {mpc_log}: {micro_txt}")
         
-        # 4. Highlight ALU
-        if self.uc.mir and self.uc.mir[2] != '00': 
-             self.labels_hardware["ALU"].config(bg=self.CORES["caixa_ativa"])
+        # 4. Highlight Hardware (Visualização de Componentes Ativos)
+        if self.uc.mir:
+            mir = self.uc.mir
+            # Mapeamento dos índices do MIR (conforme uc.py):
+            # 0:AMUX, 1:COND, 2:ALU, 3:SH, 4:MBR, 5:MAR, 6:RD, 7:WR, 8:ENC
+            
+            amux_active = (mir[0] == '1')
+            shifter_active = (mir[3] != '00')
+            
+            # MAR ativo se Escrita no MAR ou Operação de Memória
+            mar_active = (mir[5] == '1' or mir[6] == '1' or mir[7] == '1')
+            
+            # MBR ativo se Carga via C-Bus, Leitura ou Escrita na Memória
+            mbr_active = (mir[4] == '1' or mir[6] == '1' or mir[7] == '1')
+            
+            # ALU ativa se resultado for usado (ENC=1 ou MBR=1) ou se Flags forem testadas
+            # 01 e 10 em COND (índice 1) testam N e Z
+            alu_active = (mir[8] == '1' or mir[4] == '1' or mir[1] in ['01', '10'])
+            
+            latch_a_active = alu_active
+            # Latch B só é usado em Soma (00) e AND (01)
+            latch_b_active = alu_active and (mir[2] in ['00', '01']) 
+            
+            states = {
+                "AMUX": amux_active,
+                "SHIFTER": shifter_active,
+                "MAR": mar_active,
+                "MBR": mbr_active,
+                "ALU": alu_active,
+                "LATCH A": latch_a_active,
+                "LATCH B": latch_b_active
+            }
+            
+            for comp, is_active in states.items():
+                if comp in self.labels_hardware:
+                    color = self.CORES["caixa_ativa"] if is_active else self.CORES["caixa_inativa"]
+                    self.labels_hardware[comp].config(bg=color)
         else:
-             self.labels_hardware["ALU"].config(bg=self.CORES["caixa_inativa"])
+             # Se não houver instrução (reset), tudo inativo
+             for lbl in self.labels_hardware.values():
+                 lbl.config(bg=self.CORES["caixa_inativa"])
 
     def executar_passo(self):
         try:
