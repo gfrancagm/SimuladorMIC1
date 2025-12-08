@@ -1,6 +1,6 @@
 class MP:
     def __init__(self):
-        self.memoria = 1024 * [0]
+        self.memoria = 4096 * [0]
         self.carregar_programa()
         
     def carregar_programa(self):

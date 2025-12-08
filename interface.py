@@ -111,7 +111,7 @@ class SimuladorUI:
         self.tree_mem.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.config(command=self.tree_mem.yview)
 
-        for i in range(256):
+        for i in range(4096):
             self.tree_mem.insert("", "end", values=(str(i), "0"*16, "0"))
 
         # 4. Log
