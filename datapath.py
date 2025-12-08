@@ -23,6 +23,7 @@ MAR = 17
 class Datapath:
     def __init__(self):
         self.registrador = [0] * 18
+        self.registrador[SP] = 4096
         self.registrador[PLUS] = 1
         self.registrador[MINUS] = -1
         self.registrador[AMASK] = 0x0FFF
